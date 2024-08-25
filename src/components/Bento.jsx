@@ -96,7 +96,7 @@ const HeaderBlock = () => (
     <h1 className="mb-6 text-4xl font-medium leading-tight">
       <BubbleText text={"Hi, I'm Shivdatt Jangam"}/>
       <span className="text-zinc-400">
-      Just Another Android developer
+      Crafting code, one pixel at a time.
       </span>
     </h1>
     <div className="flex flex-row justify-between">
