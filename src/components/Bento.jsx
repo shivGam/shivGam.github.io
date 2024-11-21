@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import Modal from "react-modal";
 import { motion } from "framer-motion";
 import { twMerge } from "tailwind-merge";
 import { FiArrowRight, FiMapPin } from "react-icons/fi";
@@ -12,38 +13,40 @@ import { techStack } from "../data/data";
 import { IoArrowForwardCircle } from "react-icons/io5";
 import { IoMailOpenOutline } from "react-icons/io5";
 
+Modal.setAppElement("#root");
 
 export const RevealBento = () => {
-return (
+  return (
     <div className="min-h-screen bg-zinc-900 px-4 py-12 text-zinc-50 flex justify-center items-center">
-        <motion.div
-            initial="initial"
-            animate="animate"
-            transition={{
-                staggerChildren: 0.05,
-            }}
-            className="mx-auto grid max-w-4xl grid-flow-dense grid-cols-12 gap-4"
-        >
-            <HeaderBlock />
-            <SocialsBlock />
-            <AboutBlock />
-            <ProjectBlock
+      <motion.div
+        initial="initial"
+        animate="animate"
+        transition={{
+          staggerChildren: 0.05,
+        }}
+        className="mx-auto grid max-w-4xl grid-flow-dense grid-cols-12 gap-4"
+      >
+        <HeaderBlock />
+        <SocialsBlock />
+        <AboutBlock />
+        <ProjectBlock
           title="Jog It Up"
           description="A comprehensive fitness tracking application designed to help users monitor their Runs and progress."
           link="https://github.com/shivGam/JogItUp"
+          preview="https://github.com/shivGam/JogItUp/blob/main/JogItUp.gif?raw=true"
         />
         <ProjectBlock
           title="Real World"
           description="A clone of the Medium platform, enabling users to read, write, and get articles."
           link="https://github.com/shivGam/realWorld"
+          preview="https://github.com/shivGam/realWorld/blob/main/realworld.gif?raw=true"
         />
-            <LocationBlock />
-            <TechStackBlock />
-            <ComingSoonBlock />
-            
-        </motion.div>
+        <LocationBlock />
+        <TechStackBlock />
+        <ComingSoonBlock />
+      </motion.div>
     </div>
-);
+  );
 };
 
 const Block = ({ className, ...rest }) => {
@@ -278,22 +281,71 @@ const ComingSoonBlock = () => (
     </Block>
 );
 
-const ProjectBlock = ({ title, description, link }) => (
-  <Block 
-    className="col-span-6 md:col-span-6 flex flex-col justify-between"
-    whileHover={{ scale: 1.02 ,filter: "invert(100%)"}}
-  >
-    <div>
-      <h3 className="text-2xl font-bold mb-2 text-white">{title}</h3>
-      <p className="text-zinc-300 mb-4">{description}</p>
-    </div>
-    <a 
-      href={link} 
-      target="_blank" 
-      rel="noopener noreferrer" 
-      className="flex items-center gap-2 text-blue-400"
-    >
-      View Project <FiArrowRight />
-    </a>
-  </Block>
-);
+const ProjectBlock = ({ title, description, link, preview }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Loading state for GIF
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  const handleImageLoad = () => setIsLoading(false); // Update loading state once the image is loaded
+
+  return (
+    <>
+      <Block
+        className="col-span-6 md:col-span-6 flex flex-col justify-between"
+        whileHover={{ scale: 1.02, filter: "invert(100%)" }}
+      >
+        <div>
+          <h3 className="text-2xl font-bold mb-2 text-white">{title}</h3>
+          <p className="text-zinc-300 mb-4">{description}</p>
+        </div>
+        <div className="flex justify-between items-center">
+          <a
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-blue-400"
+          >
+            View Project <FiArrowRight />
+          </a>
+          <button
+            onClick={openModal}
+            className="flex items-center gap-2 text-blue-400"
+          >
+            View Project <FiArrowRight />
+          </button>
+        </div>
+      </Block>
+
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        contentLabel={`${title} Preview`}
+        className="relative z-50 bg-zinc-900 p-6 rounded-lg max-w-lg max-w-md mx-auto my-16 outline-none shadow-lg"
+        overlayClassName="fixed inset-0 z-40 bg-black bg-opacity-50 flex justify-center items-center backdrop-blur-sm"
+      >
+        <button
+          onClick={closeModal}
+          className="text-red-500 text-lg font-bold mb-4 float-right"
+        >
+          Close
+        </button>
+        <h2 className="text-2xl text-white mb-4">{title} - Preview</h2>
+        <div className="relative flex items-center justify-center">
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-zinc-800 rounded-lg">
+              <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+            </div>
+          )}
+          <img
+            src={preview}
+            alt={`${title} preview`}
+            className={`w-3/4 rounded-lg ${isLoading ? "opacity-0" : "opacity-100"}`}
+            onLoad={handleImageLoad} // Triggered when the image is fully loaded
+          />
+        </div>
+      </Modal>
+    </>
+  );
+};
