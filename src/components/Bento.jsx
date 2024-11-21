@@ -313,7 +313,7 @@ const ProjectBlock = ({ title, description, link, preview }) => {
             onClick={openModal}
             className="flex items-center gap-2 text-blue-400"
           >
-            View Project <FiArrowRight />
+            View Preview <FiArrowRight />
           </button>
         </div>
       </Block>
